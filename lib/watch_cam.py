@@ -3,14 +3,14 @@ import configparser
 from lib import FeatureDetection
 
 class WatchCam:
-    def __init__(self, configuration_filepath: str = None):
+    def __init__(self, detection: FeatureDetection, configuration_filepath: str = None):
         self.configuration = self.config(configuration_filepath)
         self.camera = cv2.VideoCapture(0)
         self.camera.set(cv2.CAP_PROP_FPS, self.configuration["camera_fps"])
         self.capture = None
         self.is_capture_ok = False
         self.is_watching = False
-        self.detection = FeatureDetection(configuration_filepath)
+        self.detection = detection
     
     def config(self, configuration_filepath: str) -> dict:
         parser = configparser.ConfigParser()

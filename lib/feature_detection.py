@@ -8,7 +8,6 @@ class FeatureDetection:
     def __init__(self, configuration_filepath: str = None):
         self.configuration = self.config(configuration_filepath)
         self.detector = dlib.get_frontal_face_detector()
-        self.detector = dlib.get_frontal_face_detector()
         self.predictor = dlib.shape_predictor(self.configuration["shape_predictor_path"])
         
 
@@ -81,7 +80,7 @@ class FeatureDetection:
 
         _frame = self.image_to_gray_pipeline(frame)
         _frame = self.brightness_increase_pipeline(_frame)
-        _frame = self.contrast_increase_pipeline(_frame)
+        # _frame = self.contrast_increase_pipeline(_frame)
 
         if self.configuration["crisp_enhancement"]:
             _frame = self.crisp_enhancement_pipeline(_frame)
@@ -93,7 +92,7 @@ class FeatureDetection:
             _frame = self.clahe_enhancement_pipeline(_frame)
 
         faces = self.detector(_frame, 1)
-        print(len(faces), faces)
+        # print(len(faces), faces)
         face = self.get_closes_face(faces)
 
         if face is None:
@@ -111,6 +110,8 @@ class FeatureDetection:
                 cv2.circle(frame, nose_tip, 3, (0, 255, 0), -1)
                 cv2.circle(frame, left_eye_center, 3, (255, 0, 255), -1)
                 cv2.circle(frame, right_eye_center, 3, (255, 0, 255), -1)
+                # for landmark in landmarks.parts():
+                #     cv2.circle(frame, (landmark.x, landmark.y), 3, (0, 255, 0), -1)
 
                 cv2.circle(_frame, nose_tip, 3, (0, 255, 0), -1)
                 cv2.circle(_frame, left_eye_center, 3, (255, 0, 255), -1)
