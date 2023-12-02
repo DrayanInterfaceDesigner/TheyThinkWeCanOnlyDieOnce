@@ -5,8 +5,6 @@ from lib import FeatureDetection
 class WatchCam:
     def __init__(self, detection: FeatureDetection, configuration_filepath: str = None):
         self.configuration = self.config(configuration_filepath)
-        self.camera = cv2.VideoCapture(0)
-        self.camera.set(cv2.CAP_PROP_FPS, self.configuration["camera_fps"])
         self.capture = None
         self.is_capture_ok = False
         self.is_watching = False
@@ -26,7 +24,8 @@ class WatchCam:
     def start_capture(self):
         if not self.is_watching:
             self.is_watching = True
-            self.capture = cv2.VideoCapture(0)
+            self.capture = cv2.VideoCapture(0, cv2.CAP_DSHOW)
+            # self.capture.set(cv2.CAP_PROP_FPS, self.configuration["camera_fps"])
 
     def start_to_watch(self):
         self.start_capture()
