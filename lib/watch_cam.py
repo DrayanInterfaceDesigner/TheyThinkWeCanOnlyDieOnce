@@ -3,7 +3,7 @@ import configparser
 from lib import FeatureDetection
 
 class WatchCam:
-    def __init__(self, detection: FeatureDetection, configuration_filepath: str = None):
+    def __init__(self, detection: FeatureDetection, configuration_filepath: str):
         self.configuration = self.config(configuration_filepath)
         self.capture = None
         self.is_capture_ok = False
