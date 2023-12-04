@@ -9,6 +9,7 @@ class WatchCam:
         self.is_capture_ok = False
         self.is_watching = False
         self.detection = detection
+        self.break_loop = False
     
     def config(self, configuration_filepath: str) -> dict:
         parser = configparser.ConfigParser()
@@ -29,25 +30,25 @@ class WatchCam:
 
     def start_to_watch(self):
         self.start_capture()
-        while self.is_watching:
+        while self.is_watching and not self.break_loop:
             self.is_capture_ok, frame = self.capture.read()
 
             if self.is_capture_ok:
-
                 if self.configuration["image_flip"]:
                     frame = cv2.flip(frame, 1)  
-                
+
                 _detections = self.detection.detect(frame)
-                
-                if self.configuration["debug_mode"]:
-                    if _detections is not None:
-                        frame = _detections["frame"]
+
+                if self.configuration["debug_mode"] and _detections is not None:
+                    frame = _detections["frame"]
 
                 if self.configuration["im_show"]:
                     cv2.imshow("frame", frame)
+                    cv2.waitKey(1)
 
-                if cv2.waitKey(1) & 0xFF == ord('q'):
+                if cv2.waitKey(1) & 0xFF == ord('q') or self.break_loop:
                     self.is_watching = False
+                    self.break_loop = False
                     break
         self.capture.release()
         cv2.destroyAllWindows()

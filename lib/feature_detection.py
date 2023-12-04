@@ -9,7 +9,7 @@ class FeatureDetection:
         self.configuration = self.config(configuration_filepath)
         self.detector = dlib.get_frontal_face_detector()
         self.predictor = dlib.shape_predictor(self.configuration["shape_predictor_path"])
-        
+        self.predictions: dict = None
 
     def config(self, configuration_filepath: str) -> dict:
         parser = configparser.ConfigParser()
@@ -99,12 +99,12 @@ class FeatureDetection:
             return None
         else:
             landmarks = self.predictor(_frame, face)
-            left_eye = [(landmarks.part(0).x, landmarks.part(0).y), (landmarks.part(1).x, landmarks.part(1).y)]
-            right_eye = [(landmarks.part(2).x, landmarks.part(2).y), (landmarks.part(3).x, landmarks.part(3).y)]
+            right_eye = [(landmarks.part(0).x, landmarks.part(0).y), (landmarks.part(1).x, landmarks.part(1).y)]
+            left_eye = [(landmarks.part(2).x, landmarks.part(2).y), (landmarks.part(3).x, landmarks.part(3).y)]
             nose_tip = (landmarks.part(4).x, landmarks.part(4).y)
             
-            left_eye_center = self.halve_landmark(left_eye)
-            right_eye_center = self.halve_landmark(right_eye)
+            right_eye_center = self.halve_landmark(left_eye)
+            left_eye_center = self.halve_landmark(right_eye)
 
             if self.configuration["draw_landmarks"]:
                 cv2.circle(frame, nose_tip, 3, (0, 255, 0), -1)
@@ -126,4 +126,5 @@ class FeatureDetection:
                 "frame": frame,
                 "detection_frame": _frame,
             }
+            self.predictions = landmarks
             return landmarks

@@ -1,11 +1,11 @@
-from lib import Vector2
+# from lib import Vector2
 
 class Feature:
     def __init__(self) -> None:
-        position: Vector2 = Vector2().ZERO()
-        acceleration: Vector2 = Vector2().ZERO()
-        velocity: Vector2 = Vector2().ZERO()
-        anchor: Vector2 = Vector2().ZERO()
+        # position: Vector2 = Vector2().ZERO()
+        # acceleration: Vector2 = Vector2().ZERO()
+        # velocity: Vector2 = Vector2().ZERO()
+        # anchor: Vector2 = Vector2().ZERO()
         size: dict = {
             "width": 0.0,
             "height": 0.0
