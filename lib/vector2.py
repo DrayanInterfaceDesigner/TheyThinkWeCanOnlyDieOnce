@@ -32,6 +32,9 @@ class Vector2:
     def __rshift__(self, other) :
         return Vector2(self.x >> other.x, self.y >> other.y)
     
+    def __tuple__(self) -> tuple:
+        return (self.x, self.y)
+    
     def dot_product(self, other) :
         return self.x * other.x + self.y * other.y
     
@@ -50,6 +53,10 @@ class Vector2:
     def angle(self, other) -> float:
         return math.acos(self.dot_product(other) / (self.magnitude() * other.magnitude()))
     
+    def lerp(self, other, t: float):
+        self.x = self.x + (other.x - self.x) * t
+        self.y = self.y + (other.y - self.y) * t
+
     def ZERO():
         return Vector2(0, 0)
     

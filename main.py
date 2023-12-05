@@ -2,15 +2,19 @@ import lib
 import pygame
 import sys
 import threading
+import configparser
 
 
 configuration_filepath = 'common/.config'
+face_filepath = 'misc/faces/default_face/.config'
+
+config = configparser.ConfigParser()
+config.read(configuration_filepath)
+
 fd = lib.FeatureDetection(configuration_filepath)
 cam = lib.WatchCam(fd, configuration_filepath)
-sprite1 = lib.Sprite(pygame.image.load('misc/faces/default_face/assets/left_eye.png'), lib.Vector2(), 100, 100)
-sprite2 = lib.Sprite(pygame.image.load('misc/faces/default_face/assets/right_eye.png'), lib.Vector2(), 100, 100)
-sprite3 = lib.Sprite(pygame.image.load('misc/faces/default_face/assets/nose.png'), lib.Vector2(), 33, 20)
-
+fm = lib.FeatureManager()
+BuildFace = lib.BuildFace(fm, fd, face_filepath)
 
 def animation():
     pygame.init()
@@ -20,9 +24,10 @@ def animation():
     bg_color = (22, 22, 22)
 
     screen = pygame.display.set_mode((width, height), pygame.NOFRAME)
-    pygame.display.set_caption("Pygame Borderless Example")
+    pygame.display.set_caption("Pygame Borderless Sex")
 
     buffer = pygame.Surface((width, height))
+    ui = pygame.Surface((width, height))
 
     if pygame.display.get_driver() == 'windib':
         print("Warning: Pygame is not using hardware acceleration. Consider updating your graphics drivers.")
@@ -30,8 +35,8 @@ def animation():
         print("Pygame is using hardware acceleration.")
 
 
-
     clock = pygame.time.Clock()
+    screen.fill(bg_color)
     while True:
         # print(fd.predictions)
         for event in pygame.event.get():
@@ -40,22 +45,28 @@ def animation():
                 sys.exit()
         
         buffer.fill(bg_color)
+        
         if fd.predictions is not None:
-            sprite1.position.x = center_x//2 + fd.predictions["left_eye_center"][0] + 60
-            sprite1.position.y = (center_y//2 - 60) + fd.predictions["left_eye_center"][1]
-            sprite2.position.x = center_x//2 + fd.predictions["right_eye_center"][0] - 60
-            sprite2.position.y = (center_y//2 - 60) + fd.predictions["right_eye_center"][1]
-            sprite3.position.x = center_x//2 + fd.predictions["nose_tip"][0]
-            sprite3.position.y = (center_y//2 - 60) + fd.predictions["nose_tip"][1]
-            sprite1.draw(buffer)
-            sprite2.draw(buffer)
-            sprite3.draw(buffer)
+            # put the FPS on screen
+            font = pygame.font.SysFont('Arial', 30)
+            fps = font.render("FPS: "+str(int(clock.get_fps())), True, pygame.Color('white'))
+            buffer.blit(fps, (50, 50))
 
+            fm.update(1)
+            fm.render(buffer)
 
+            if config.getboolean("Debug", "debug_mode"):
+                pygame.draw.circle(buffer, (255, 255, 23), fd.predictions["left_eye_center"] , 5)
+                pygame.draw.circle(buffer, (255, 23, 255), fd.predictions["right_eye_center"] , 5)
+                pygame.draw.circle(buffer, (23, 255, 255), fd.predictions["nose_tip"] , 5)
+            
         pygame.display.update()
-        screen.blit(buffer, (0, 0))
+
+        screen.blit(buffer, (center_x // 2, center_y // 2))
+
+
         pygame.display.flip()
-        clock.tick(30)
+        clock.tick(60)
 
 thread1 = threading.Thread(target=cam.start_to_watch)
 thread2 = threading.Thread(target=animation)

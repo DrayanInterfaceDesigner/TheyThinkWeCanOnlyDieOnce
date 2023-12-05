@@ -26,6 +26,7 @@ class WatchCam:
         if not self.is_watching:
             self.is_watching = True
             self.capture = cv2.VideoCapture(0, cv2.CAP_DSHOW)
+            self.capture.set(cv2.CAP_PROP_FPS, 30)
             # self.capture.set(cv2.CAP_PROP_FPS, self.configuration["camera_fps"])
 
     def start_to_watch(self):

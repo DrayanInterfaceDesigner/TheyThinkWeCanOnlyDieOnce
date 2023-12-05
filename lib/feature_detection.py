@@ -98,7 +98,11 @@ class FeatureDetection:
         if face is None:
             return None
         else:
-            landmarks = self.predictor(_frame, face)
+            x, y, w, h = (face.left(), face.top(), face.width(), face.height())
+            dlib_rect = dlib.rectangle(x, y, x + w, y + h)
+
+            landmarks = self.predictor(_frame, dlib_rect)
+            
             right_eye = [(landmarks.part(0).x, landmarks.part(0).y), (landmarks.part(1).x, landmarks.part(1).y)]
             left_eye = [(landmarks.part(2).x, landmarks.part(2).y), (landmarks.part(3).x, landmarks.part(3).y)]
             nose_tip = (landmarks.part(4).x, landmarks.part(4).y)
